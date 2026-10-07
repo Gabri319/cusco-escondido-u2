@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cusco Escondido</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: system-ui;
+      }
+      body {
+        background: #0e0e10;
+        color: #fff;
+        padding: 20px;
+      }
+      h1 {
+        font-size: 32px;
+        font-weight: 800;
+      }
+      h1 span {
+        color: #a78bfa;
+      }
+      p.sub {
+        color: #888;
+        margin: 8px 0 20px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        max-width: 900px;
+      }
+      @media (min-width: 700px) {
+        .grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      .card {
+        background: #1c1c1f;
+        border-radius: 18px;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      .card img {
+        width: 100%;
+        height: 140px;
+        object-fit: cover;
+        background: #222;
+        display: block;
+      }
+      .card div {
+        padding: 10px;
+      }
+      .card h3 {
+        font-size: 13px;
+      }
+      .card span {
+        font-size: 10px;
+        color: #a78bfa;
+        font-weight: 700;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.88);
+        z-index: 10;
+        padding: 15px;
+        overflow: auto;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal.active {
+        display: flex;
+      }
+      .modal-box {
+        background: #1e1e22;
+        width: 100%;
+        max-width: 420px;
+        border-radius: 20px;
+        overflow: hidden;
+        margin: auto;
+      }
+      .modal-box img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+      }
+      .modal-content {
+        padding: 18px;
+      }
+      .tag {
+        display: inline-block;
+        background: #2a2a30;
+        color: #a78bfa;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        margin: 2px;
+      }
+      .btn {
+        display: block;
+        background: #fff;
+        color: #000;
+        text-align: center;
+        padding: 12px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        margin-top: 14px;
+      }
+      .btn2 {
+        display: block;
+        text-align: center;
+        color: #aaa;
+        margin-top: 10px;
+        cursor: pointer;
+        padding: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Cusco <span>Escondido</span></h1>
+    <p class="sub">12 lugares secretos - toca para ver historia</p>
+    <div class="grid" id="grid"></div>
+    <div
+      class="modal"
+      id="modal"
+      onclick="if (event.target == this) this.classList.remove('active');"
+    >
+      <div class="modal-box"><div id="box"></div></div>
+    </div>
+    <script>
+      const lugares = [
+        {
+          n: "Ñaupa Iglesia",
+          img: "img/naupa.jpg",
+          epoca: "Pre-Inca, 1000 años antes de los incas",
+          alt: "2850 msnm",
+          d: "Templo tallado dentro de una cueva. Dicen que es un portal a otra dimensión. Fue un huaca Wari y luego Inca. Tiene un altar perfecto tallado en roca viva.",
+          tip: "Ve en la mañana, no hay nadie. Lleva linterna.",
+          m: "Ñaupa Iglesia Ollantaytambo",
+        },
+        {
+          n: "Templo de la Luna",
+          img: "img/luna.jpg",
+          epoca: "Inca, siglo XV - Reinado de Pachacútec",
+          alt: "3600 msnm",
+          d: "Huaca escondida en el bosque de Sacsayhuamán. Cuevas con forma de puma y serpiente. Los chamanes aún hacen pagos a la tierra ahí. Era lugar de iniciación de sacerdotisas.",
+          tip: "Entra por la parte de atrás de Qenqo, el camino es escondido.",
+          m: "Templo de la Luna Cusco",
+        },
+        {
+          n: "Inkilltambo",
+          img: "img/inkill.jpg",
+          epoca: "Inca, 1438-1471, Pachacútec Inca Yupanqui",
+          alt: "3500 msnm",
+          d: "Ciudadela inca olvidada a 40 min de San Blas. Fue centro agrícola experimental. Tiene andenes enormes y canales de agua que aún funcionan. Siempre está vacía.",
+          tip: "Sube por San Blas, lleva agua, no hay tiendas.",
+          m: "Inkilltambo Cusco",
+        },
+        {
+          n: "Waqrapukara",
+          img: "img/waqra.jpg",
+          epoca: "Pre-Inca Canchis, luego fortaleza Inca siglo XV",
+          alt: "4300 msnm",
+          d: "Fortaleza con forma de cóndor sobre un abismo. Significa 'fortaleza del cóndor con cuernos'. Era observatorio astronómico y santuario del cóndor. Parece Choquequirao pero sin turistas.",
+          tip: "Caminata dura de 2h. Soroche fuerte, lleva hoja de coca.",
+          m: "Waqrapukara Cusco",
+        },
+        {
+          n: "Huchuy Qosqo",
+          img: "img/huchuy.jpg",
+          epoca: "Inca, 1420 - Palacio de Wiracocha",
+          alt: "3650 msnm",
+          d: "Palacio del Inca Wiracocha sobre el Valle Sagrado. Significa 'Cusco pequeño'. Fue abandonado y tragado por el bosque. Vista increíble de Pisac y Calca.",
+          tip: "Trekking de 3h desde Tambomachay. Baja por Lamay.",
+          m: "Huchuy Qosqo",
+        },
+        {
+          n: "Qenqo Bosque",
+          img: "img/qenqo.jpg",
+          epoca: "Inca, 1500 d.C. - Ceremonial",
+          alt: "3550 msnm",
+          d: "Bosque de piedras detrás del Qenqo turístico. Formas raras de animales tallados. Lugar de ofrendas a la Pachamama y de momificación inca.",
+          tip: "No entres al Qenqo pagado, rodea por la derecha.",
+          m: "Bosque Qenqo Cusco",
+        },
+        {
+          n: "Chakan",
+          img: "img/chakan.jpg",
+          epoca: "Formación natural, uso Inca como mirador",
+          alt: "3420 msnm",
+          d: "Balcón del Diablo. Mirador natural donde ves todo Cusco. Los incas lo usaban para controlar el valle. Solo van parejas cusqueñas al atardecer.",
+          tip: "Perfecto para sunset. A 20 min en moto de Plaza de Armas.",
+          m: "Chakan Cusco mirador",
+        },
+        {
+          n: "Killarumiyoc",
+          img: "img/killarumiyoc.jpg",
+          epoca: "Inca, siglo XV - Templo a la Luna (Killa)",
+          alt: "3450 msnm",
+          d: "Santuario de la Luna en Anta. Roca gigante con una luna tallada. Templo dedicado a Mama Killa, diosa de la luna. Tiene una cueva con forma de luna en media luna.",
+          tip: "A 1h de Cusco en colectivo a Anta. Gratis.",
+          m: "Killarumiyoc Cusco",
+        },
+        {
+          n: "Pumamarka",
+          img: "img/pumamarka.jpg",
+          epoca: "Inca, 1400 d.C. - Control militar",
+          alt: "3200 msnm",
+          d: "Fortaleza en forma de puma en Ollantaytambo. Protegía la entrada al Valle Sagrado. Arriba solo hay cóndores y viento. Vista a la verónica nevada.",
+          tip: "Subida de 1h fuerte. Mejor en la tarde, el sol pega de frente.",
+          m: "Pumamarka Ollantaytambo",
+        },
+        {
+          n: "Q'eswachaka",
+          img: "img/qeswachaka.jpg",
+          epoca: "Inca, 500 años de antigüedad, se renueva cada año",
+          alt: "3700 msnm",
+          d: "El último puente inca tejido a mano cada año con ichu. Cruje pero aguanta 4 personas. Técnica ancestral quechua declarada por la UNESCO. Se teje cada segundo domingo de junio.",
+          tip: "Si vas en junio ves el tejido en vivo. A 3h de Cusco.",
+          m: "Puente Qeswachaka Cusco",
+        },
+        {
+          n: "Lares Termales",
+          img: "img/lares.jpg",
+          epoca: "Natural, uso desde época pre-inca",
+          alt: "3250 msnm",
+          d: "Aguas termales naturales a 3200 msnm, a 1 sol la entrada. Solo gente local de Lares. Agua sulfurosa que cura huesos. Rodeado de montañas.",
+          tip: "Lleva toalla. El agua está a 40 grados.",
+          m: "Baños termales de Lares Cusco",
+        },
+        {
+          n: "Maras Salineras",
+          img: "img/maras.jpg",
+          epoca: "Pre-Inca, cultura Wari - más de 1100 años",
+          alt: "3380 msnm",
+          d: "Más de 3000 pozas de sal rosada que brillan al sol. Usadas desde tiempo de los Wari antes de los incas. Cada poza pertenece a una familia de Maras.",
+          tip: "Ve a las 7am sin gente. La sal rosada se compra a 5 soles.",
+          m: "Salineras de Maras",
+        },
+      ];
+      const grid = document.getElementById("grid"),
+        modal = document.getElementById("modal"),
+        box = document.getElementById("box");
+      lugares.forEach((l, i) => {
+        grid.innerHTML += `<div class="card" onclick="abrir(${i})"><img src="${l.img}"><div><h3>${l.n}</h3><span>VER HISTORIA</span></div></div>`;
+      });
+      function abrir(i) {
+        const l = lugares[i];
+        box.innerHTML = `<img src="${l.img}"><div class="modal-content"><h2>${l.n}</h2><div style="margin:8px 0"><span class="tag">📅 ${l.epoca}</span> <span class="tag">⛰️ ${l.alt}</span></div><p style="color:#bbb;font-size:14px;line-height:1.6;margin-top:8px">${l.d}</p><p style="color:#a78bfa;font-size:13px;margin-top:10px"><b>💡 Tip local:</b> ${l.tip}</p><a class="btn" href="https://www.google.com/maps/search/${encodeURIComponent(l.m)}" target="_blank">📍 Ver en Mapa</a><a class="btn2" onclick="modal.classList.remove('active')">Cerrar</a></div>`;
+        modal.classList.add("active");
+      }
+    </script>
+  </body>
+</html>
